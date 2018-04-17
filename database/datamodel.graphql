@@ -1,0 +1,17 @@
+type Vote {
+    id: ID! @unique
+    createdAt: DateTime!
+    type: String!
+    startIndex: Int!
+    endIndex: Int!
+    user: User!
+}
+
+
+type User {
+    id: ID! @unique
+    name: String!
+    email: String! @unique
+    password: String!
+    votes: [Vote!]!
+}

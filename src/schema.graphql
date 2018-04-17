@@ -1,0 +1,14 @@
+# import Vote from "./generated/prisma.graphql"
+
+type Query{
+        info: String!
+        myVotes: [Vote!]!
+        vote(id: ID!): Vote
+    }
+
+type Mutation{
+    vote(type: String!, startIndex: Int!, endIndex: Int!): Vote!
+    deleteVote(id: ID!): Vote
+}
+
+
