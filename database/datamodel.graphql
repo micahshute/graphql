@@ -4,6 +4,7 @@ type Vote {
     type: String!
     startIndex: Int!
     endIndex: Int!
+    songId: Int!
     user: User!
 }
 

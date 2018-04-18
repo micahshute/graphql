@@ -15,6 +15,7 @@ const resolvers = {
         vote: (root, args, context, info) => {
             const vote = {
                 type: args.type,
+                songId: args.songId,
                 startIndex: args.startIndex,
                 endIndex: args.endIndex
             }
