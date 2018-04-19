@@ -5,21 +5,47 @@
 # Model Types
 #
 
+type Category implements Node {
+  id: ID!
+  type: String!
+}
+
+type Comment implements Node {
+  id: ID!
+  createdAt: DateTime!
+  content: String!
+  author(where: UserWhereInput): User!
+  songId: Int!
+  commentId: ID
+  startIndex: Int!
+  endIndex: Int!
+  reactions(where: ReactionWhereInput, orderBy: ReactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reaction!]
+}
+
+type Reaction implements Node {
+  id: ID!
+  comment(where: CommentWhereInput): Comment!
+  user(where: UserWhereInput): User!
+  category(where: CategoryWhereInput): Category!
+}
+
 type User implements Node {
   id: ID!
   name: String!
   email: String!
   password: String!
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote!]
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
 
 type Vote implements Node {
   id: ID!
   createdAt: DateTime!
-  type: String!
+  isUpvote: Boolean!
   startIndex: Int!
   endIndex: Int!
   songId: Int!
+  commentId: ID
   user(where: UserWhereInput): User!
 }
 
@@ -27,6 +53,18 @@ type Vote implements Node {
 #
 # Other Types
 #
+
+type AggregateCategory {
+  count: Int!
+}
+
+type AggregateComment {
+  count: Int!
+}
+
+type AggregateReaction {
+  count: Int!
+}
 
 type AggregateUser {
   count: Int!
@@ -43,6 +81,724 @@ type BatchPayload {
   count: Long!
 }
 
+"""
+A connection to a list of items.
+"""
+type CategoryConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [CategoryEdge]!
+  aggregate: AggregateCategory!
+}
+
+input CategoryCreateInput {
+  type: String!
+}
+
+input CategoryCreateOneInput {
+  create: CategoryCreateInput
+  connect: CategoryWhereUniqueInput
+}
+
+"""
+An edge in a connection.
+"""
+type CategoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Category!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum CategoryOrderByInput {
+  id_ASC
+  id_DESC
+  type_ASC
+  type_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type CategoryPreviousValues {
+  id: ID!
+  type: String!
+}
+
+type CategorySubscriptionPayload {
+  mutation: MutationType!
+  node: Category
+  updatedFields: [String!]
+  previousValues: CategoryPreviousValues
+}
+
+input CategorySubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CategorySubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CategorySubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CategoryWhereInput
+}
+
+input CategoryUpdateDataInput {
+  type: String
+}
+
+input CategoryUpdateInput {
+  type: String
+}
+
+input CategoryUpdateOneInput {
+  create: CategoryCreateInput
+  connect: CategoryWhereUniqueInput
+  delete: Boolean
+  update: CategoryUpdateDataInput
+  upsert: CategoryUpsertNestedInput
+}
+
+input CategoryUpsertNestedInput {
+  update: CategoryUpdateDataInput!
+  create: CategoryCreateInput!
+}
+
+input CategoryWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CategoryWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CategoryWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  type: String
+  """
+  All values that are not equal to given value.
+  """
+  type_not: String
+  """
+  All values that are contained in given list.
+  """
+  type_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  type_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  type_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  type_lte: String
+  """
+  All values greater than the given value.
+  """
+  type_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  type_gte: String
+  """
+  All values containing the given string.
+  """
+  type_contains: String
+  """
+  All values not containing the given string.
+  """
+  type_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  type_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  type_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  type_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  type_not_ends_with: String
+}
+
+input CategoryWhereUniqueInput {
+  id: ID
+  type: String
+}
+
+"""
+A connection to a list of items.
+"""
+type CommentConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [CommentEdge]!
+  aggregate: AggregateComment!
+}
+
+input CommentCreateInput {
+  content: String!
+  songId: Int!
+  commentId: ID
+  startIndex: Int!
+  endIndex: Int!
+  author: UserCreateOneWithoutCommentsInput!
+  reactions: ReactionCreateManyWithoutCommentInput
+}
+
+input CommentCreateManyWithoutAuthorInput {
+  create: [CommentCreateWithoutAuthorInput!]
+  connect: [CommentWhereUniqueInput!]
+}
+
+input CommentCreateOneWithoutReactionsInput {
+  create: CommentCreateWithoutReactionsInput
+  connect: CommentWhereUniqueInput
+}
+
+input CommentCreateWithoutAuthorInput {
+  content: String!
+  songId: Int!
+  commentId: ID
+  startIndex: Int!
+  endIndex: Int!
+  reactions: ReactionCreateManyWithoutCommentInput
+}
+
+input CommentCreateWithoutReactionsInput {
+  content: String!
+  songId: Int!
+  commentId: ID
+  startIndex: Int!
+  endIndex: Int!
+  author: UserCreateOneWithoutCommentsInput!
+}
+
+"""
+An edge in a connection.
+"""
+type CommentEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Comment!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum CommentOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  content_ASC
+  content_DESC
+  songId_ASC
+  songId_DESC
+  commentId_ASC
+  commentId_DESC
+  startIndex_ASC
+  startIndex_DESC
+  endIndex_ASC
+  endIndex_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type CommentPreviousValues {
+  id: ID!
+  createdAt: DateTime!
+  content: String!
+  songId: Int!
+  commentId: ID
+  startIndex: Int!
+  endIndex: Int!
+}
+
+type CommentSubscriptionPayload {
+  mutation: MutationType!
+  node: Comment
+  updatedFields: [String!]
+  previousValues: CommentPreviousValues
+}
+
+input CommentSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CommentSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CommentSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: CommentWhereInput
+}
+
+input CommentUpdateInput {
+  content: String
+  songId: Int
+  commentId: ID
+  startIndex: Int
+  endIndex: Int
+  author: UserUpdateOneWithoutCommentsInput
+  reactions: ReactionUpdateManyWithoutCommentInput
+}
+
+input CommentUpdateManyWithoutAuthorInput {
+  create: [CommentCreateWithoutAuthorInput!]
+  connect: [CommentWhereUniqueInput!]
+  disconnect: [CommentWhereUniqueInput!]
+  delete: [CommentWhereUniqueInput!]
+  update: [CommentUpdateWithWhereUniqueWithoutAuthorInput!]
+  upsert: [CommentUpsertWithWhereUniqueWithoutAuthorInput!]
+}
+
+input CommentUpdateOneWithoutReactionsInput {
+  create: CommentCreateWithoutReactionsInput
+  connect: CommentWhereUniqueInput
+  delete: Boolean
+  update: CommentUpdateWithoutReactionsDataInput
+  upsert: CommentUpsertWithoutReactionsInput
+}
+
+input CommentUpdateWithoutAuthorDataInput {
+  content: String
+  songId: Int
+  commentId: ID
+  startIndex: Int
+  endIndex: Int
+  reactions: ReactionUpdateManyWithoutCommentInput
+}
+
+input CommentUpdateWithoutReactionsDataInput {
+  content: String
+  songId: Int
+  commentId: ID
+  startIndex: Int
+  endIndex: Int
+  author: UserUpdateOneWithoutCommentsInput
+}
+
+input CommentUpdateWithWhereUniqueWithoutAuthorInput {
+  where: CommentWhereUniqueInput!
+  data: CommentUpdateWithoutAuthorDataInput!
+}
+
+input CommentUpsertWithoutReactionsInput {
+  update: CommentUpdateWithoutReactionsDataInput!
+  create: CommentCreateWithoutReactionsInput!
+}
+
+input CommentUpsertWithWhereUniqueWithoutAuthorInput {
+  where: CommentWhereUniqueInput!
+  update: CommentUpdateWithoutAuthorDataInput!
+  create: CommentCreateWithoutAuthorInput!
+}
+
+input CommentWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [CommentWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [CommentWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  createdAt: DateTime
+  """
+  All values that are not equal to given value.
+  """
+  createdAt_not: DateTime
+  """
+  All values that are contained in given list.
+  """
+  createdAt_in: [DateTime!]
+  """
+  All values that are not contained in given list.
+  """
+  createdAt_not_in: [DateTime!]
+  """
+  All values less than the given value.
+  """
+  createdAt_lt: DateTime
+  """
+  All values less than or equal the given value.
+  """
+  createdAt_lte: DateTime
+  """
+  All values greater than the given value.
+  """
+  createdAt_gt: DateTime
+  """
+  All values greater than or equal the given value.
+  """
+  createdAt_gte: DateTime
+  content: String
+  """
+  All values that are not equal to given value.
+  """
+  content_not: String
+  """
+  All values that are contained in given list.
+  """
+  content_in: [String!]
+  """
+  All values that are not contained in given list.
+  """
+  content_not_in: [String!]
+  """
+  All values less than the given value.
+  """
+  content_lt: String
+  """
+  All values less than or equal the given value.
+  """
+  content_lte: String
+  """
+  All values greater than the given value.
+  """
+  content_gt: String
+  """
+  All values greater than or equal the given value.
+  """
+  content_gte: String
+  """
+  All values containing the given string.
+  """
+  content_contains: String
+  """
+  All values not containing the given string.
+  """
+  content_not_contains: String
+  """
+  All values starting with the given string.
+  """
+  content_starts_with: String
+  """
+  All values not starting with the given string.
+  """
+  content_not_starts_with: String
+  """
+  All values ending with the given string.
+  """
+  content_ends_with: String
+  """
+  All values not ending with the given string.
+  """
+  content_not_ends_with: String
+  songId: Int
+  """
+  All values that are not equal to given value.
+  """
+  songId_not: Int
+  """
+  All values that are contained in given list.
+  """
+  songId_in: [Int!]
+  """
+  All values that are not contained in given list.
+  """
+  songId_not_in: [Int!]
+  """
+  All values less than the given value.
+  """
+  songId_lt: Int
+  """
+  All values less than or equal the given value.
+  """
+  songId_lte: Int
+  """
+  All values greater than the given value.
+  """
+  songId_gt: Int
+  """
+  All values greater than or equal the given value.
+  """
+  songId_gte: Int
+  commentId: ID
+  """
+  All values that are not equal to given value.
+  """
+  commentId_not: ID
+  """
+  All values that are contained in given list.
+  """
+  commentId_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  commentId_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  commentId_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  commentId_lte: ID
+  """
+  All values greater than the given value.
+  """
+  commentId_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  commentId_gte: ID
+  """
+  All values containing the given string.
+  """
+  commentId_contains: ID
+  """
+  All values not containing the given string.
+  """
+  commentId_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  commentId_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  commentId_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  commentId_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  commentId_not_ends_with: ID
+  startIndex: Int
+  """
+  All values that are not equal to given value.
+  """
+  startIndex_not: Int
+  """
+  All values that are contained in given list.
+  """
+  startIndex_in: [Int!]
+  """
+  All values that are not contained in given list.
+  """
+  startIndex_not_in: [Int!]
+  """
+  All values less than the given value.
+  """
+  startIndex_lt: Int
+  """
+  All values less than or equal the given value.
+  """
+  startIndex_lte: Int
+  """
+  All values greater than the given value.
+  """
+  startIndex_gt: Int
+  """
+  All values greater than or equal the given value.
+  """
+  startIndex_gte: Int
+  endIndex: Int
+  """
+  All values that are not equal to given value.
+  """
+  endIndex_not: Int
+  """
+  All values that are contained in given list.
+  """
+  endIndex_in: [Int!]
+  """
+  All values that are not contained in given list.
+  """
+  endIndex_not_in: [Int!]
+  """
+  All values less than the given value.
+  """
+  endIndex_lt: Int
+  """
+  All values less than or equal the given value.
+  """
+  endIndex_lte: Int
+  """
+  All values greater than the given value.
+  """
+  endIndex_gt: Int
+  """
+  All values greater than or equal the given value.
+  """
+  endIndex_gte: Int
+  author: UserWhereInput
+  reactions_every: ReactionWhereInput
+  reactions_some: ReactionWhereInput
+  reactions_none: ReactionWhereInput
+}
+
+input CommentWhereUniqueInput {
+  id: ID
+}
+
 scalar DateTime
 
 """
@@ -54,16 +810,34 @@ scalar Long
 type Mutation {
   createVote(data: VoteCreateInput!): Vote!
   createUser(data: UserCreateInput!): User!
+  createComment(data: CommentCreateInput!): Comment!
+  createCategory(data: CategoryCreateInput!): Category!
+  createReaction(data: ReactionCreateInput!): Reaction!
   updateVote(data: VoteUpdateInput!, where: VoteWhereUniqueInput!): Vote
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateComment(data: CommentUpdateInput!, where: CommentWhereUniqueInput!): Comment
+  updateCategory(data: CategoryUpdateInput!, where: CategoryWhereUniqueInput!): Category
+  updateReaction(data: ReactionUpdateInput!, where: ReactionWhereUniqueInput!): Reaction
   deleteVote(where: VoteWhereUniqueInput!): Vote
   deleteUser(where: UserWhereUniqueInput!): User
+  deleteComment(where: CommentWhereUniqueInput!): Comment
+  deleteCategory(where: CategoryWhereUniqueInput!): Category
+  deleteReaction(where: ReactionWhereUniqueInput!): Reaction
   upsertVote(where: VoteWhereUniqueInput!, create: VoteCreateInput!, update: VoteUpdateInput!): Vote!
   upsertUser(where: UserWhereUniqueInput!, create: UserCreateInput!, update: UserUpdateInput!): User!
+  upsertComment(where: CommentWhereUniqueInput!, create: CommentCreateInput!, update: CommentUpdateInput!): Comment!
+  upsertCategory(where: CategoryWhereUniqueInput!, create: CategoryCreateInput!, update: CategoryUpdateInput!): Category!
+  upsertReaction(where: ReactionWhereUniqueInput!, create: ReactionCreateInput!, update: ReactionUpdateInput!): Reaction!
   updateManyVotes(data: VoteUpdateInput!, where: VoteWhereInput): BatchPayload!
   updateManyUsers(data: UserUpdateInput!, where: UserWhereInput): BatchPayload!
+  updateManyComments(data: CommentUpdateInput!, where: CommentWhereInput): BatchPayload!
+  updateManyCategories(data: CategoryUpdateInput!, where: CategoryWhereInput): BatchPayload!
+  updateManyReactions(data: ReactionUpdateInput!, where: ReactionWhereInput): BatchPayload!
   deleteManyVotes(where: VoteWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
+  deleteManyComments(where: CommentWhereInput): BatchPayload!
+  deleteManyCategories(where: CategoryWhereInput): BatchPayload!
+  deleteManyReactions(where: ReactionWhereInput): BatchPayload!
 }
 
 enum MutationType {
@@ -107,10 +881,19 @@ type PageInfo {
 type Query {
   votes(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Vote]!
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
+  comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment]!
+  categories(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Category]!
+  reactions(where: ReactionWhereInput, orderBy: ReactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Reaction]!
   vote(where: VoteWhereUniqueInput!): Vote
   user(where: UserWhereUniqueInput!): User
+  comment(where: CommentWhereUniqueInput!): Comment
+  category(where: CategoryWhereUniqueInput!): Category
+  reaction(where: ReactionWhereUniqueInput!): Reaction
   votesConnection(where: VoteWhereInput, orderBy: VoteOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): VoteConnection!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
+  commentsConnection(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CommentConnection!
+  categoriesConnection(where: CategoryWhereInput, orderBy: CategoryOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): CategoryConnection!
+  reactionsConnection(where: ReactionWhereInput, orderBy: ReactionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ReactionConnection!
   """
   Fetches an object given its ID
   """
@@ -120,9 +903,207 @@ type Query {
   id: ID!): Node
 }
 
+"""
+A connection to a list of items.
+"""
+type ReactionConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  A list of edges.
+  """
+  edges: [ReactionEdge]!
+  aggregate: AggregateReaction!
+}
+
+input ReactionCreateInput {
+  comment: CommentCreateOneWithoutReactionsInput!
+  user: UserCreateOneInput!
+  category: CategoryCreateOneInput!
+}
+
+input ReactionCreateManyWithoutCommentInput {
+  create: [ReactionCreateWithoutCommentInput!]
+  connect: [ReactionWhereUniqueInput!]
+}
+
+input ReactionCreateWithoutCommentInput {
+  user: UserCreateOneInput!
+  category: CategoryCreateOneInput!
+}
+
+"""
+An edge in a connection.
+"""
+type ReactionEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Reaction!
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+}
+
+enum ReactionOrderByInput {
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type ReactionPreviousValues {
+  id: ID!
+}
+
+type ReactionSubscriptionPayload {
+  mutation: MutationType!
+  node: Reaction
+  updatedFields: [String!]
+  previousValues: ReactionPreviousValues
+}
+
+input ReactionSubscriptionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ReactionSubscriptionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ReactionSubscriptionWhereInput!]
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: ReactionWhereInput
+}
+
+input ReactionUpdateInput {
+  comment: CommentUpdateOneWithoutReactionsInput
+  user: UserUpdateOneInput
+  category: CategoryUpdateOneInput
+}
+
+input ReactionUpdateManyWithoutCommentInput {
+  create: [ReactionCreateWithoutCommentInput!]
+  connect: [ReactionWhereUniqueInput!]
+  disconnect: [ReactionWhereUniqueInput!]
+  delete: [ReactionWhereUniqueInput!]
+  update: [ReactionUpdateWithWhereUniqueWithoutCommentInput!]
+  upsert: [ReactionUpsertWithWhereUniqueWithoutCommentInput!]
+}
+
+input ReactionUpdateWithoutCommentDataInput {
+  user: UserUpdateOneInput
+  category: CategoryUpdateOneInput
+}
+
+input ReactionUpdateWithWhereUniqueWithoutCommentInput {
+  where: ReactionWhereUniqueInput!
+  data: ReactionUpdateWithoutCommentDataInput!
+}
+
+input ReactionUpsertWithWhereUniqueWithoutCommentInput {
+  where: ReactionWhereUniqueInput!
+  update: ReactionUpdateWithoutCommentDataInput!
+  create: ReactionCreateWithoutCommentInput!
+}
+
+input ReactionWhereInput {
+  """
+  Logical AND on all given filters.
+  """
+  AND: [ReactionWhereInput!]
+  """
+  Logical OR on all given filters.
+  """
+  OR: [ReactionWhereInput!]
+  id: ID
+  """
+  All values that are not equal to given value.
+  """
+  id_not: ID
+  """
+  All values that are contained in given list.
+  """
+  id_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  id_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  id_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  id_lte: ID
+  """
+  All values greater than the given value.
+  """
+  id_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  id_gte: ID
+  """
+  All values containing the given string.
+  """
+  id_contains: ID
+  """
+  All values not containing the given string.
+  """
+  id_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  id_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  id_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  id_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  id_not_ends_with: ID
+  comment: CommentWhereInput
+  user: UserWhereInput
+  category: CategoryWhereInput
+}
+
+input ReactionWhereUniqueInput {
+  id: ID
+}
+
 type Subscription {
   vote(where: VoteSubscriptionWhereInput): VoteSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+  comment(where: CommentSubscriptionWhereInput): CommentSubscriptionPayload
+  category(where: CategorySubscriptionWhereInput): CategorySubscriptionPayload
+  reaction(where: ReactionSubscriptionWhereInput): ReactionSubscriptionPayload
 }
 
 """
@@ -145,6 +1126,17 @@ input UserCreateInput {
   email: String!
   password: String!
   votes: VoteCreateManyWithoutUserInput
+  comments: CommentCreateManyWithoutAuthorInput
+}
+
+input UserCreateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+}
+
+input UserCreateOneWithoutCommentsInput {
+  create: UserCreateWithoutCommentsInput
+  connect: UserWhereUniqueInput
 }
 
 input UserCreateOneWithoutVotesInput {
@@ -152,10 +1144,18 @@ input UserCreateOneWithoutVotesInput {
   connect: UserWhereUniqueInput
 }
 
+input UserCreateWithoutCommentsInput {
+  name: String!
+  email: String!
+  password: String!
+  votes: VoteCreateManyWithoutUserInput
+}
+
 input UserCreateWithoutVotesInput {
   name: String!
   email: String!
   password: String!
+  comments: CommentCreateManyWithoutAuthorInput
 }
 
 """
@@ -229,11 +1229,36 @@ input UserSubscriptionWhereInput {
   node: UserWhereInput
 }
 
+input UserUpdateDataInput {
+  name: String
+  email: String
+  password: String
+  votes: VoteUpdateManyWithoutUserInput
+  comments: CommentUpdateManyWithoutAuthorInput
+}
+
 input UserUpdateInput {
   name: String
   email: String
   password: String
   votes: VoteUpdateManyWithoutUserInput
+  comments: CommentUpdateManyWithoutAuthorInput
+}
+
+input UserUpdateOneInput {
+  create: UserCreateInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateDataInput
+  upsert: UserUpsertNestedInput
+}
+
+input UserUpdateOneWithoutCommentsInput {
+  create: UserCreateWithoutCommentsInput
+  connect: UserWhereUniqueInput
+  delete: Boolean
+  update: UserUpdateWithoutCommentsDataInput
+  upsert: UserUpsertWithoutCommentsInput
 }
 
 input UserUpdateOneWithoutVotesInput {
@@ -244,10 +1269,28 @@ input UserUpdateOneWithoutVotesInput {
   upsert: UserUpsertWithoutVotesInput
 }
 
+input UserUpdateWithoutCommentsDataInput {
+  name: String
+  email: String
+  password: String
+  votes: VoteUpdateManyWithoutUserInput
+}
+
 input UserUpdateWithoutVotesDataInput {
   name: String
   email: String
   password: String
+  comments: CommentUpdateManyWithoutAuthorInput
+}
+
+input UserUpsertNestedInput {
+  update: UserUpdateDataInput!
+  create: UserCreateInput!
+}
+
+input UserUpsertWithoutCommentsInput {
+  update: UserUpdateWithoutCommentsDataInput!
+  create: UserCreateWithoutCommentsInput!
 }
 
 input UserUpsertWithoutVotesInput {
@@ -479,6 +1522,9 @@ input UserWhereInput {
   votes_every: VoteWhereInput
   votes_some: VoteWhereInput
   votes_none: VoteWhereInput
+  comments_every: CommentWhereInput
+  comments_some: CommentWhereInput
+  comments_none: CommentWhereInput
 }
 
 input UserWhereUniqueInput {
@@ -502,10 +1548,11 @@ type VoteConnection {
 }
 
 input VoteCreateInput {
-  type: String!
+  isUpvote: Boolean!
   startIndex: Int!
   endIndex: Int!
   songId: Int!
+  commentId: ID
   user: UserCreateOneWithoutVotesInput!
 }
 
@@ -515,10 +1562,11 @@ input VoteCreateManyWithoutUserInput {
 }
 
 input VoteCreateWithoutUserInput {
-  type: String!
+  isUpvote: Boolean!
   startIndex: Int!
   endIndex: Int!
   songId: Int!
+  commentId: ID
 }
 
 """
@@ -540,14 +1588,16 @@ enum VoteOrderByInput {
   id_DESC
   createdAt_ASC
   createdAt_DESC
-  type_ASC
-  type_DESC
+  isUpvote_ASC
+  isUpvote_DESC
   startIndex_ASC
   startIndex_DESC
   endIndex_ASC
   endIndex_DESC
   songId_ASC
   songId_DESC
+  commentId_ASC
+  commentId_DESC
   updatedAt_ASC
   updatedAt_DESC
 }
@@ -555,10 +1605,11 @@ enum VoteOrderByInput {
 type VotePreviousValues {
   id: ID!
   createdAt: DateTime!
-  type: String!
+  isUpvote: Boolean!
   startIndex: Int!
   endIndex: Int!
   songId: Int!
+  commentId: ID
 }
 
 type VoteSubscriptionPayload {
@@ -597,10 +1648,11 @@ input VoteSubscriptionWhereInput {
 }
 
 input VoteUpdateInput {
-  type: String
+  isUpvote: Boolean
   startIndex: Int
   endIndex: Int
   songId: Int
+  commentId: ID
   user: UserUpdateOneWithoutVotesInput
 }
 
@@ -614,10 +1666,11 @@ input VoteUpdateManyWithoutUserInput {
 }
 
 input VoteUpdateWithoutUserDataInput {
-  type: String
+  isUpvote: Boolean
   startIndex: Int
   endIndex: Int
   songId: Int
+  commentId: ID
 }
 
 input VoteUpdateWithWhereUniqueWithoutUserInput {
@@ -722,59 +1775,11 @@ input VoteWhereInput {
   All values greater than or equal the given value.
   """
   createdAt_gte: DateTime
-  type: String
+  isUpvote: Boolean
   """
   All values that are not equal to given value.
   """
-  type_not: String
-  """
-  All values that are contained in given list.
-  """
-  type_in: [String!]
-  """
-  All values that are not contained in given list.
-  """
-  type_not_in: [String!]
-  """
-  All values less than the given value.
-  """
-  type_lt: String
-  """
-  All values less than or equal the given value.
-  """
-  type_lte: String
-  """
-  All values greater than the given value.
-  """
-  type_gt: String
-  """
-  All values greater than or equal the given value.
-  """
-  type_gte: String
-  """
-  All values containing the given string.
-  """
-  type_contains: String
-  """
-  All values not containing the given string.
-  """
-  type_not_contains: String
-  """
-  All values starting with the given string.
-  """
-  type_starts_with: String
-  """
-  All values not starting with the given string.
-  """
-  type_not_starts_with: String
-  """
-  All values ending with the given string.
-  """
-  type_ends_with: String
-  """
-  All values not ending with the given string.
-  """
-  type_not_ends_with: String
+  isUpvote_not: Boolean
   startIndex: Int
   """
   All values that are not equal to given value.
@@ -862,6 +1867,59 @@ input VoteWhereInput {
   All values greater than or equal the given value.
   """
   songId_gte: Int
+  commentId: ID
+  """
+  All values that are not equal to given value.
+  """
+  commentId_not: ID
+  """
+  All values that are contained in given list.
+  """
+  commentId_in: [ID!]
+  """
+  All values that are not contained in given list.
+  """
+  commentId_not_in: [ID!]
+  """
+  All values less than the given value.
+  """
+  commentId_lt: ID
+  """
+  All values less than or equal the given value.
+  """
+  commentId_lte: ID
+  """
+  All values greater than the given value.
+  """
+  commentId_gt: ID
+  """
+  All values greater than or equal the given value.
+  """
+  commentId_gte: ID
+  """
+  All values containing the given string.
+  """
+  commentId_contains: ID
+  """
+  All values not containing the given string.
+  """
+  commentId_not_contains: ID
+  """
+  All values starting with the given string.
+  """
+  commentId_starts_with: ID
+  """
+  All values not starting with the given string.
+  """
+  commentId_not_starts_with: ID
+  """
+  All values ending with the given string.
+  """
+  commentId_ends_with: ID
+  """
+  All values not ending with the given string.
+  """
+  commentId_not_ends_with: ID
   user: UserWhereInput
 }
 

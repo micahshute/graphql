@@ -1,10 +1,11 @@
 type Vote {
     id: ID! @unique
     createdAt: DateTime!
-    type: String!
+    isUpvote: Boolean!
     startIndex: Int!
     endIndex: Int!
     songId: Int!
+    commentId: ID
     user: User!
 }
 
@@ -15,4 +16,29 @@ type User {
     email: String! @unique
     password: String!
     votes: [Vote!]!
+    comments: [Comment!]!
+}
+
+type Comment {
+    id: ID! @unique
+    createdAt: DateTime!
+    content: String!
+    author: User!
+    songId: Int!
+    commentId: ID
+    startIndex: Int!
+    endIndex: Int!
+    reactions: [Reaction!]!
+}
+
+type Category{
+    id: ID! @unique
+    type: String! @unique
+}
+
+type Reaction {
+    id: ID! @unique
+    comment: Comment!
+    user: User!
+    category: Category!
 }

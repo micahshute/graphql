@@ -1,27 +1,18 @@
 
 //prisma 1.6.2
+
+const Query = require('./resolvers/Query');
+const Mutation = require('./resolvers/Mutation');
+const AuthPayload = require('./resolvers/AuthPayload');
+const Subscription = require('./resolvers/Subscription');
 const { GraphQLServer } = require('graphql-yoga');
 const { Prisma } = require('prisma-binding');
 
 const resolvers = {
-    Query: {
-        info: () => `This is a test HHSB server`,
-        myVotes: () => (root, args, context, info) => {
-            return context.db.query.votes({}, info);  
-        }
-    },
-
-    Mutation: {
-        vote: (root, args, context, info) => {
-            const vote = {
-                type: args.type,
-                songId: args.songId,
-                startIndex: args.startIndex,
-                endIndex: args.endIndex
-            }
-            return context.db.mutation.createVote({ data: vote }, info)
-        },
-    }
+    Query,
+    Mutation,
+    AuthPayload, 
+    Subscription
 }
 
 
@@ -33,7 +24,7 @@ const server = new GraphQLServer({
         db: new Prisma({
             typeDefs: 'src/generated/prisma.graphql',
             endpoint: 'https://us1.prisma.sh/public-coralwarlock-759/scoreboard-node/dev',
-            secret: 'seal90210',
+            secret: 'secretCode',
             debug: true,
         })
     })

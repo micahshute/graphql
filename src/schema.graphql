@@ -1,16 +1,18 @@
-# import Vote from "./generated/prisma.graphql"
+# import Vote, VoteSubscriptionPayload, Comment, CommentSubscriptionPayload, Reaction, Category, ReactionSubscriptionPayload from "./generated/prisma.graphql"
 
 type Query{
         info: String!
-        myVotes: [Vote!]!
-        vote(id: ID!): Vote
+        votes(songId: Int, userId: ID): [Vote!]!
+        comments(filter: String, songId: Int, commentId: ID, userId: ID): [Comment!]!
     }
 
 type Mutation{
-    vote(type: String!, startIndex: Int!, endIndex: Int!): Vote!
+    vote(isUpvote: Boolean!, startIndex: Int!, endIndex: Int!, songId: Int!, commentId: ID): Vote!
     deleteVote(id: ID!): Vote
     signup(email: String!, password: String!, name: String!): AuthPayload
     login(email: String!, password: String!): AuthPayload
+    comment(content: String!, startIndex: Int!, endIndex: Int!, songId: Int!, commentId: ID): Comment!
+    react(commentId: ID!, categoryType: String!): Reaction
 }
 
 type AuthPayload {
@@ -23,4 +25,10 @@ type User {
     name: String!
     email: String!
     votes: [Vote!]!
+}
+
+type Subscription {
+    newVote: VoteSubscriptionPayload
+    newComment: CommentSubscriptionPayload
+    newReaction: ReactionSubscriptionPayload
 }
