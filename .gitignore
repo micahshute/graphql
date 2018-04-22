@@ -58,7 +58,7 @@ typings/
 .env
 
 #API Keys
-config.js
+*.config.js
 
 #Prisma secret
 database/prisma.yml
