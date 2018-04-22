@@ -7,7 +7,7 @@ const AuthPayload = require('./resolvers/AuthPayload');
 const Subscription = require('./resolvers/Subscription');
 const { GraphQLServer } = require('graphql-yoga');
 const { Prisma } = require('prisma-binding');
-
+const { prismaSecret } = require('../keys.config');
 const resolvers = {
     Query,
     Mutation,
@@ -24,7 +24,7 @@ const server = new GraphQLServer({
         db: new Prisma({
             typeDefs: 'src/generated/prisma.graphql',
             endpoint: 'https://us1.prisma.sh/public-coralwarlock-759/scoreboard-node/dev',
-            secret: 'secretCode',
+            secret: prismaSecret,
             debug: true,
         })
     })
