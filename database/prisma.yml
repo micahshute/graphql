@@ -1,5 +1,0 @@
-service: scoreboard-node
-stage: dev
-datamodel: datamodel.graphql
-secret: secretcode
-cluster: public-coralwarlock-759/prisma-us1
