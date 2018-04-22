@@ -1,7 +1,7 @@
 const { 
     GENIUS_TOKEN,
     APP_SECRET
-} = require('../config');
+} = require('../keys.config');
 
 const jwt = require('jsonwebtoken');
 const Lyricist = require('lyricist');
