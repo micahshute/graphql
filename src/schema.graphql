@@ -4,6 +4,8 @@ type Query{
         info: String!
         votes(songId: Int, userId: ID): [Vote!]!
         comments(filter: String, songId: Int, commentId: ID, userId: ID): [Comment!]!
+        songSearch(searchString: String!): [SongInfo!]!
+        lyrics(songId: Int!): Lyrics!
     }
 
 type Mutation{
@@ -31,4 +33,15 @@ type Subscription {
     newVote: VoteSubscriptionPayload
     newComment: CommentSubscriptionPayload
     newReaction: ReactionSubscriptionPayload
+}
+
+type SongInfo {
+    title: String!
+    artist: String!
+    songId: Int!
+    imageURI: String!
+}
+
+type Lyrics {
+    content: String!
 }

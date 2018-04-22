@@ -1,6 +1,13 @@
-const jwt = require('jsonwebtoken');
-const APP_SECRET = 'This-is-my-secret-t0k3n';
+const { 
+    GENIUS_TOKEN,
+    APP_SECRET
+} = require('../config');
 
+const jwt = require('jsonwebtoken');
+const Lyricist = require('lyricist');
+
+
+const lyricist = new Lyricist(GENIUS_TOKEN);
 
 function getUserId(context){
     const Authorization = context.request.get('Authorization');
@@ -13,7 +20,11 @@ function getUserId(context){
     throw new Error('Not authenticated');
 }
 
+
+
 module.exports = {
     APP_SECRET,
-    getUserId
+    GENIUS_TOKEN,
+    getUserId,
+    lyricist
 }
