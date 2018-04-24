@@ -44,16 +44,7 @@ async function login(parent, args, context, info){
 async function vote(parent, args, context, info){
     const userId = getUserId(context);
 
-    const voteExists = await context.db.exists.Vote({
-        user: { id: userId },
-        songId: args.songId,
-        startIndex: args.startIndex,
-        endIndex: args.endIndex,
-        commentId: args.commentId
-    });
-    if(voteExists){
-        throw new Error('Already voted')
-    }
+  
 
     return context.db.mutation.createVote({
         data: {
@@ -138,3 +129,15 @@ module.exports = {
     comment,
     react
 }
+
+
+  // const voteExists = await context.db.exists.Vote({
+    //     user: { id: userId },
+    //     songId: args.songId,
+    //     startIndex: args.startIndex,
+    //     endIndex: args.endIndex,
+    //     commentId: args.commentId
+    // });
+    // if(voteExists){
+    //     throw new Error('Already voted')
+    // }

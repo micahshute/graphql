@@ -1,6 +1,7 @@
 const { 
     GENIUS_TOKEN,
-    lyricist
+    lyricist,
+    getUserId
     } = require('../utils');
 
 
@@ -41,9 +42,16 @@ function votes(parent, args, context, info){
     if(args.userId){
         where.user = {id: args.userId }
     }
+    if(args.myVotes){
+        const myId = getUserId(context);
+        where.user= {id: myId}
+    }
     return context.db.query.votes({where}, info);
 }
 
+function vote(parent, args, context, info){
+    return context.db.query.vote({where : {id: args.id}}, info);
+}
 
 async function songSearch(parent, args, context, info){
     const headers = { "Authorization" : `Bearer ${GENIUS_TOKEN}`};
@@ -77,5 +85,6 @@ module.exports = {
     votes,
     comments,
     songSearch,
-    lyrics
+    lyrics,
+    vote
 }

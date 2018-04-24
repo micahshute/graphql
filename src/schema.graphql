@@ -2,10 +2,11 @@
 
 type Query{
         info: String!
-        votes(songId: Int, userId: ID): [Vote!]!
+        votes(songId: Int, userId: ID, myVotes: Boolean): [Vote!]!
         comments(filter: String, songId: Int, commentId: ID, userId: ID): [Comment!]!
         songSearch(searchString: String!): [SongInfo!]!
         lyrics(songId: Int!): Lyrics!
+        vote(id: ID): Vote
     }
 
 type Mutation{
