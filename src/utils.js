@@ -9,6 +9,10 @@ const Lyricist = require('lyricist');
 
 const lyricist = new Lyricist(GENIUS_TOKEN);
 
+function getIdFromToken(token){
+    const { userId } = jwt.verify(token, APP_SECRET);
+}
+
 function getUserId(context){
     const Authorization = context.request.get('Authorization');
     if(Authorization){

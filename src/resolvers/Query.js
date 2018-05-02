@@ -1,7 +1,8 @@
 const { 
     GENIUS_TOKEN,
     lyricist,
-    getUserId
+    getUserId,
+    getIdFromToken
     } = require('../utils');
 
 
@@ -53,6 +54,12 @@ function vote(parent, args, context, info){
     return context.db.query.vote({where : {id: args.id}}, info);
 }
 
+function myInfo(parent, args, context, info){
+    
+    const userId = args.token ? getIdFromToken(args.token) : getUserId(context);
+    return context.db.query.user({where: {id: userId}}, info);
+}
+
 async function songSearch(parent, args, context, info){
     const headers = { "Authorization" : `Bearer ${GENIUS_TOKEN}`};
     const url = `https://api.genius.com/search?q=${args.searchString}&per_page=50`;
@@ -80,11 +87,23 @@ async function lyrics(parent, args, context, info){
     return { content: song.lyrics };
 }
 
+async function song(parent, args, context, info) {
+    const song = await lyricist.song(args.id);
+    return ({
+        title: song.title,
+        artist: song.primary_artist.name,
+        songId: song.id,
+        imageURI: song.header_image_thumbnail_url
+    });
+}
+
 module.exports = {
     info,
     votes,
     comments,
     songSearch,
     lyrics,
-    vote
+    vote,
+    myInfo,
+    song
 }

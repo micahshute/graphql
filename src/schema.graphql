@@ -7,6 +7,8 @@ type Query{
         songSearch(searchString: String!): [SongInfo!]!
         lyrics(songId: Int!): Lyrics!
         vote(id: ID): Vote
+        myInfo(token: String): User!
+        song(id: Int!): SongInfo!
     }
 
 type Mutation{
