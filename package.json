@@ -4,7 +4,8 @@
   "description": "sandbox GraphQL server for HHSB",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm install && node src/index.js"
   },
   "author": "Micah Shute",
   "license": "ISC",
@@ -14,6 +15,8 @@
     "jsonwebtoken": "^8.2.1",
     "lyricist": "^2.2.2",
     "npm": "^5.8.0",
-    "prisma-binding": "^1.5.17"
+    "prisma-binding": "^1.5.17",
+    "graphql-cli": "^2.16.0",
+    "prisma": "^1.8.3"
   }
 }
